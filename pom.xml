@@ -5,15 +5,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.va.oia.terminology.converters</groupId>
 	<artifactId>ucum</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>ucum</name>
 	<packaging>pom</packaging>
 	
 	<properties>
 		<processedArtifact.group>org.ihtsdo.sct.baseline</processedArtifact.group>
 		<processedArtifact.id>sct-econcept</processedArtifact.id>
-		<processedArtifact.version>2013.07.31-build-4-SNAPSHOT</processedArtifact.version>
+		<processedArtifact.version>2013.07.31-build-3</processedArtifact.version>
 		<processedArtifact.classifier>latest</processedArtifact.classifier>
+		<!--processedArtifact.group>gov.va.oia.terminology.converters</processedArtifact.group>
+		<processedArtifact.id>loinc-econcept</processedArtifact.id>
+		<processedArtifact.version>2.40-loader-2.5</processedArtifact.version>
+		<processedArtifact.classifier></processedArtifact.classifier-->
 	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<wb-toolkit.version>2.32-trek-no-jini-va-1.4</wb-toolkit.version>

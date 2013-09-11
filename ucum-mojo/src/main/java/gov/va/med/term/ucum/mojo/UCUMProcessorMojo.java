@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.dwfa.cement.ArchitectonicAuxiliary;
@@ -97,7 +98,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 	 * Input file details
 	 * 
 	 * @parameter
-	 * @required
+	 * @optional
 	 */
 	private String artifactClassifier;
 
@@ -159,7 +160,10 @@ public class UCUMProcessorMojo extends AbstractMojo
 			eConceptUtil_.addStringAnnotation(refsetConcept, artifactGroup, contentVersion.getProperty("artifactGroup").getUUID(), false);
 			eConceptUtil_.addStringAnnotation(refsetConcept, artifactId, contentVersion.getProperty("artifactId").getUUID(), false);
 			eConceptUtil_.addStringAnnotation(refsetConcept, artifactVersion, contentVersion.getProperty("artifactVersion").getUUID(), false);
-			eConceptUtil_.addStringAnnotation(refsetConcept, artifactClassifier, contentVersion.getProperty("artifactClassifier").getUUID(), false);
+			if (StringUtils.isNotEmpty(artifactClassifier))
+			{
+				eConceptUtil_.addStringAnnotation(refsetConcept, artifactClassifier, contentVersion.getProperty("artifactClassifier").getUUID(), false);
+			}
 			eConceptUtil_.addStringAnnotation(refsetConcept, releaseVersion, contentVersion.RELEASE.getUUID(), false);
 			eConceptUtil_.addStringAnnotation(refsetConcept, loaderVersion, contentVersion.LOADER_VERSION.getUUID(), false);
 			eConceptUtil_.addDescription(refsetConcept, "Unified Code for Units of Measure", DescriptionType.SYNONYM, true, null, null, false);
@@ -328,52 +332,38 @@ public class UCUMProcessorMojo extends AbstractMojo
 	{
 		ArrayList<UCUMValue> results = new ArrayList<>();
 
-		if (text != null && text.length() > 0)
-		{
-			Iterator<String> items = Arrays.asList(text.split("\\s")).iterator();
+		Iterator<String> items = tokenize(text).iterator();
 
-			String previous = null;
-			String current = null;
+		String previous = null;
+		String current = null;
+
+		while (!isNumeric(previous) && items.hasNext())
+		{
+			previous = items.next();
+		}
+		if (!items.hasNext())
+		{
+			return results;
+		}
+		current = items.next();
+
+		parseHelper(concept, text, previous, current, results);
+
+		while (items.hasNext())
+		{
+			previous = current;
+			current = items.next();
 
 			while (!isNumeric(previous) && items.hasNext())
 			{
-				previous = items.next().trim();
-			}
-			while ((current == null || current.length() == 0))
-			{
-				if (!items.hasNext())
-				{
-					break;
-				}
-				current = items.next().trim();
-			}
-
-			parseHelper(concept, text, previous, current, results);
-
-			while (items.hasNext())
-			{
 				previous = current;
-				current = items.next().trim();
-
-				while (!isNumeric(previous) && items.hasNext())
-				{
-					previous = current;
-					current = items.next().trim();
-				}
-				while (current == null || current.length() == 0)
-				{
-					if (!items.hasNext())
-					{
-						break;
-					}
-					current = items.next().trim();
-				}
-				if (previous.equals(current) || !isNumeric(previous))
-				{
-					continue;
-				}
-				parseHelper(concept, text, previous, current, results);
+				current = items.next();
 			}
+			if (previous.equals(current) || !isNumeric(previous))
+			{
+				continue;
+			}
+			parseHelper(concept, text, previous, current, results);
 		}
 		return results;
 	}
@@ -417,6 +407,12 @@ public class UCUMProcessorMojo extends AbstractMojo
 		{
 			return;
 		}
+		
+		if (current.equals("H"))
+		{
+			current = "h";  //They probably mean hour - not "Henry"
+		}
+		
 		UCUMValue potential = uomoParser(previous, current);
 		if (potential != null)
 		{
@@ -515,6 +511,26 @@ public class UCUMProcessorMojo extends AbstractMojo
 			{
 				throw new IllegalArgumentException();
 			}
+			if (name.equals("%") || name.equals("'") || name.equals("\""))
+			{
+				throw new IllegalArgumentException();
+			}
+			if (name.equals("a") || name.equals("c")) //atto, speed of light...
+			{
+				throw new IllegalArgumentException();
+			}
+			if (name.equals("grade") || name.equals("K")) //odd one... , Kelvin - which diesn't get used as far as I can see
+			{
+				throw new IllegalArgumentException();
+			}
+			if (name.equals("rd")) //an incorrect abbreviation for rad, which is wrong in the cases I looked at
+			{
+				throw new IllegalArgumentException();
+			}
+			if (dimension != null && dimension.contains("I"))  //CURRENT
+			{
+				throw new IllegalArgumentException("Curent is unlikely in SCT");
+			}
 		}
 
 		protected int requiredDataHash()
@@ -539,6 +555,86 @@ public class UCUMProcessorMojo extends AbstractMojo
 					(concept == null ? "" : concept.toString()), (fullConceptDescription == null ? "" : fullConceptDescription) };
 		}
 	}
+	
+	private static ArrayList<String> tokenize(String string)
+	{
+		ArrayList<String> tokens = new ArrayList<>();
+		
+		if (string != null && string.length() > 0)
+		{
+			Iterator<String> whitespaceSplit = Arrays.asList(string.split("\\s")).iterator();
+			while (whitespaceSplit.hasNext())
+			{
+				String temp = whitespaceSplit.next().trim();
+				if (temp.length() == 0)
+				{
+					continue;
+				}
+				//subsplit on digits? - aka 'ab5.0mg' into 'ab' 5.0' 'mg'
+				
+				Boolean readingDigits = null;
+				int digitStart = -1;
+				int textStart = -1;
+				for (int i = 0; i < temp.length(); i++)
+				{
+					if (Character.isDigit(temp.charAt(i)) || temp.charAt(i) == '.')
+					{
+						if (readingDigits == null)
+						{
+							readingDigits = true;
+							digitStart = i;
+						}
+						else if (readingDigits)
+						{
+							continue;
+						}
+						else
+						{
+							readingDigits = true;
+							digitStart = i;
+							if (textStart != -1 && i > textStart)
+							{
+								tokens.add(temp.substring(textStart, digitStart));
+							}
+							textStart = -1;
+						}
+					}
+					else
+					{
+						if (readingDigits == null)
+						{
+							readingDigits = false;
+							textStart = i;
+						}
+						else if (readingDigits)
+						{
+							readingDigits = false;
+							textStart = i;
+							if (digitStart != -1 && i > digitStart)
+							{
+								tokens.add(temp.substring(digitStart, textStart));
+							}
+							digitStart = -1;
+						}
+						else
+						{
+							continue;
+						}
+					}
+				}
+				
+				if (textStart != -1)
+				{
+					tokens.add(temp.substring(textStart));
+				}
+				if (digitStart != -1)
+				{
+					tokens.add(temp.substring(digitStart));
+				}
+			}
+		}
+		return tokens;
+	}
 
 	public static void main(String[] args) throws Exception
 	{
@@ -550,6 +646,5 @@ public class UCUMProcessorMojo extends AbstractMojo
 		i.artifactId = "c";
 		i.artifactVersion = "d";
 		i.execute();
-
 	}
 }
