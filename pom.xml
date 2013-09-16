@@ -21,7 +21,7 @@
 	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<wb-toolkit.version>2.32-trek-no-jini-va-1.4</wb-toolkit.version>
-		<convertersCommonCode.version>2.5-SNAPSHOT</convertersCommonCode.version>
+		<convertersCommonCode.version>2.5</convertersCommonCode.version>
 	</properties>
 
 	<scm>
