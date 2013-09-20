@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.va.oia.terminology.converters</groupId>
 	<artifactId>ucum</artifactId>
-	<version>1.1</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>ucum</name>
 	<packaging>pom</packaging>
 	
@@ -20,8 +20,8 @@
 		<processedArtifact.classifier></processedArtifact.classifier-->
 	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<wb-toolkit.version>2.32-trek-no-jini-va-1.4</wb-toolkit.version>
-		<convertersCommonCode.version>2.5</convertersCommonCode.version>
+		<wb-toolkit.version>2.32-trek-no-jini-va-1.5</wb-toolkit.version>
+		<convertersCommonCode.version>2.6-SNAPSHOT</convertersCommonCode.version>
 	</properties>
 
 	<scm>
