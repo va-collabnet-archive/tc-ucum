@@ -234,7 +234,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 									{
 										eConceptUtil_.addRefsetMember(refsetConcept, concept.getPrimordialUuid(), null, true, null);
 									}
-									EConcept skeletonToMerge = eConceptUtil_.createConcept(concept.getPrimordialUuid());
+									EConcept skeletonToMerge = eConceptUtil_.createSkeletonClone(concept);
 									hitCounter.incrementAndGet();
 
 									HashMap<Integer, ArrayList<Integer>> uniqueForConcept = new HashMap<>();
