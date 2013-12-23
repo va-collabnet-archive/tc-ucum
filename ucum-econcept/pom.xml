@@ -12,7 +12,7 @@
 	<packaging>pom</packaging>
 	<name>ucum-econcept</name>
 	<!-- this should be set to ${processedArtifact.id}-{processedArtifact.version}-loader-${project.parent.version} but that doesn't appease the maven gods that know best.... -->
-	<version>sct-econcept-2013.07.31-build-3-loader-1.2</version>
+	<version>sct-econcept-2013.07.31-build-4-loader-1.2</version>
 
 	<build>
 		<plugins>

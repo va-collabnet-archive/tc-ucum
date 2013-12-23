@@ -12,7 +12,7 @@
 	<properties>
 		<processedArtifact.group>org.ihtsdo.sct.baseline</processedArtifact.group>
 		<processedArtifact.id>sct-econcept</processedArtifact.id>
-		<processedArtifact.version>2013.07.31-build-3</processedArtifact.version>
+		<processedArtifact.version>2013.07.31-build-4</processedArtifact.version>
 		<processedArtifact.classifier>latest</processedArtifact.classifier>
 		<!--processedArtifact.group>gov.va.oia.terminology.converters</processedArtifact.group>
 		<processedArtifact.id>loinc-econcept</processedArtifact.id>
