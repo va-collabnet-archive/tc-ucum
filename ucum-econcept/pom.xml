@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>gov.va.oia.terminology.converters</groupId>
 		<artifactId>ucum</artifactId>
-		<version>1.2.1</version>
+		<version>1.2.2</version>
 	</parent>
 
 	<artifactId>ucum-econcept</artifactId>
 	<packaging>pom</packaging>
 	<name>ucum-econcept</name>
 	<!-- this should be set to ${processedArtifact.id}-{processedArtifact.version}-loader-${project.parent.version} but that doesn't appease the maven gods that know best.... -->
-	<version>sct-econcept-2014.01.31-build-3-loader-1.2.1</version>
+	<version>2014.01.31-build-8-loader-1.2.2</version>
 
 	<build>
 		<plugins>
