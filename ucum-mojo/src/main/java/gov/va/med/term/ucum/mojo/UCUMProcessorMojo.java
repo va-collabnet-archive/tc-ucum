@@ -3,10 +3,11 @@ package gov.va.med.term.ucum.mojo;
 import gov.va.oia.terminology.converters.sharedUtils.ConsoleUtil;
 import gov.va.oia.terminology.converters.sharedUtils.EConceptUtility;
 import gov.va.oia.terminology.converters.sharedUtils.EConceptUtility.DescriptionType;
-import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_Attributes;
+import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_Annotations;
 import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_ContentVersion;
-import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_Refsets;
+import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_MemberRefsets;
 import gov.va.oia.terminology.converters.sharedUtils.stats.ConverterUUID;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -18,6 +19,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,6 +38,7 @@ import org.eclipse.uomo.units.impl.format.LocalUnitFormatImpl;
 import org.ihtsdo.etypes.EConcept;
 import org.ihtsdo.tk.dto.concept.component.description.TkDescription;
 import org.ihtsdo.tk.dto.concept.component.refex.type_string.TkRefsetStrMember;
+
 import au.com.bytecode.opencsv.CSVWriter;
 
 /**
@@ -48,9 +52,9 @@ public class UCUMProcessorMojo extends AbstractMojo
 {
 	private static final String ucumNamespaceBaseSeed = "gov.va.med.term.ucum";
 
-	private BPT_Refsets refsets;
+	private BPT_MemberRefsets refsets;
 	private BPT_ContentVersion contentVersion;
-	private BPT_Attributes attributes;
+	private BPT_Annotations attributes;
 	private EConceptUtility eConceptUtil_;
 	private DataOutputStream dos;
 
@@ -118,6 +122,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 	 */
 	private String releaseVersion;
 
+	@Override
 	public void execute() throws MojoExecutionException
 	{
 		try
@@ -129,11 +134,14 @@ public class UCUMProcessorMojo extends AbstractMojo
 
 			File touch = new File(outputDirectory, "ucumEConcepts.jbin");
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(touch)));
-			eConceptUtil_ = new EConceptUtility(ucumNamespaceBaseSeed, "UCUM Path", dos);
+			
+			SimpleDateFormat parse = new SimpleDateFormat("yyyy.MM.dd");
+			
+			eConceptUtil_ = new EConceptUtility(ucumNamespaceBaseSeed, "UCUM Path", dos, parse.parse(artifactVersion).getTime());
 
-			refsets = new BPT_Refsets("UCUM");
+			refsets = new BPT_MemberRefsets("UCUM");
 			contentVersion = new BPT_ContentVersion();
-			attributes = new BPT_Attributes();
+			attributes = new BPT_Annotations();
 
 			refsets.addProperty("has UCUM Unit");
 			attributes.addProperty("UCUM Name");
@@ -318,7 +326,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 
 			// this could be removed from final release. Just added to help debug editor problems.
 			ConsoleUtil.println("Dumping UUID Debug File");
-			ConverterUUID.dump(new File(outputDirectory, "ucumUuidDebugMap.txt"));
+			ConverterUUID.dump(outputDirectory, "ucumUuid");
 
 			ConsoleUtil.writeOutputToFile(new File(outputDirectory, "ConsoleOutput.txt").toPath());
 		}
@@ -519,7 +527,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 			{
 				throw new IllegalArgumentException();
 			}
-			if (name.equals("grade") || name.equals("K")) //odd one... , Kelvin - which diesn't get used as far as I can see
+			if (name.equals("grade") || name.equals("K")) //odd one... , Kelvin - which doesn't get used as far as I can see
 			{
 				throw new IllegalArgumentException();
 			}

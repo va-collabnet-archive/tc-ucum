@@ -20,8 +20,8 @@
 		<processedArtifact.classifier></processedArtifact.classifier-->
 	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<wb-toolkit.version>2.32-trek-no-jini-va-1.25</wb-toolkit.version>
-		<convertersCommonCode.version>2.6.1</convertersCommonCode.version>
+		<wb-toolkit.version>2.32-trek-no-jini-va-1.26</wb-toolkit.version>
+		<convertersCommonCode.version>3.0-SNAPSHOT</convertersCommonCode.version>
 	</properties>
 
 	<scm>
