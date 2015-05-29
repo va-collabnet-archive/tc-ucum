@@ -1,6 +1,7 @@
 package gov.va.med.term.ucum.mojo;
 
 import gov.va.oia.terminology.converters.sharedUtils.ConsoleUtil;
+import gov.va.oia.terminology.converters.sharedUtils.ConverterBaseMojo;
 import gov.va.oia.terminology.converters.sharedUtils.EConceptUtility;
 import gov.va.oia.terminology.converters.sharedUtils.EConceptUtility.DescriptionType;
 import gov.va.oia.terminology.converters.sharedUtils.propertyTypes.BPT_Annotations;
@@ -31,8 +32,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.dwfa.cement.ArchitectonicAuxiliary;
 import org.eclipse.uomo.units.impl.format.LocalUnitFormatImpl;
 import org.ihtsdo.etypes.EConcept;
@@ -43,12 +46,9 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Goal which converts CHDR data into the workbench jbin format
- * 
- * @goal process-ucum-data
- * 
- * @phase process-sources
  */
-public class UCUMProcessorMojo extends AbstractMojo
+@Mojo( name = "process-ucum-data", defaultPhase = LifecyclePhase.PROCESS_SOURCES )
+public class UCUMProcessorMojo extends ConverterBaseMojo
 {
 	private static final String ucumNamespaceBaseSeed = "gov.va.med.term.ucum";
 
@@ -59,43 +59,21 @@ public class UCUMProcessorMojo extends AbstractMojo
 	private DataOutputStream dos;
 
 	/**
-	 * Where to put the output file.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @required
-	 */
-	private File outputDirectory;
-
-	/**
-	 * Location of source data file. Expected to be a directory.
-	 * 
-	 * @parameter
-	 * @required
-	 */
-	private File inputFile;
-
-	/**
 	 * Input file details
-	 * 
-	 * @parameter
-	 * @required
 	 */
+	@Parameter (required = true )
 	private String artifactGroup;
 
 	/**
 	 * Input file details
-	 * 
-	 * @parameter
-	 * @required
 	 */
+	@Parameter (required = true )
 	private String artifactId;
 
 	/**
 	 * Input file details
-	 * 
-	 * @parameter
-	 * @required
 	 */
+	@Parameter (required = true )
 	private String artifactVersion;
 
 	/**
@@ -104,23 +82,8 @@ public class UCUMProcessorMojo extends AbstractMojo
 	 * @parameter
 	 * @optional
 	 */
+	@Parameter
 	private String artifactClassifier;
-
-	/**
-	 * Loader version number Use parent because project.version pulls in the version of the data file, which I don't want.
-	 * 
-	 * @parameter expression="${project.parent.version}"
-	 * @required
-	 */
-	private String loaderVersion;
-
-	/**
-	 * Content version number
-	 * 
-	 * @parameter expression="${project.version}"
-	 * @required
-	 */
-	private String releaseVersion;
 
 	@Override
 	public void execute() throws MojoExecutionException
@@ -172,7 +135,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 			{
 				eConceptUtil_.addStringAnnotation(refsetConcept, artifactClassifier, contentVersion.getProperty("artifactClassifier").getUUID(), false);
 			}
-			eConceptUtil_.addStringAnnotation(refsetConcept, releaseVersion, contentVersion.RELEASE.getUUID(), false);
+			eConceptUtil_.addStringAnnotation(refsetConcept, converterResultVersion, contentVersion.RELEASE.getUUID(), false);
 			eConceptUtil_.addStringAnnotation(refsetConcept, loaderVersion, contentVersion.LOADER_VERSION.getUUID(), false);
 			eConceptUtil_.addDescription(refsetConcept, "Unified Code for Units of Measure", DescriptionType.SYNONYM, true, null, null, false);
 
@@ -192,7 +155,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 			int processed = 0;
 			final AtomicInteger hitCounter = new AtomicInteger();
 			;
-			DataInputStream in = new DataInputStream(new FileInputStream(inputFile.listFiles(new FilenameFilter()
+			DataInputStream in = new DataInputStream(new FileInputStream(inputFileLocation.listFiles(new FilenameFilter()
 			{
 				@Override
 				public boolean accept(File dir, String name)
@@ -648,7 +611,7 @@ public class UCUMProcessorMojo extends AbstractMojo
 	{
 		UCUMProcessorMojo i = new UCUMProcessorMojo();
 		i.outputDirectory = new File("../ucum-econcept/target");
-		i.inputFile = new File("../ucum-econcept/target/generated-resources/data");
+		i.inputFileLocation = new File("../ucum-econcept/target/generated-resources/data");
 		i.artifactClassifier = "a";
 		i.artifactGroup = "b";
 		i.artifactId = "c";

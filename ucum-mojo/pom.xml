@@ -2,68 +2,108 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>gov.va.oia.terminology.converters</groupId>
-		<artifactId>ucum</artifactId>
-		<version>1.2.2</version>
-	</parent>
 
+	<groupId>gov.va.oia.terminology.converters</groupId>
 	<artifactId>ucum-mojo</artifactId>
+	<version>2.0-SNAPSHOT</version>
+	
 	<packaging>maven-plugin</packaging>
 	<name>ucum-mojo</name>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<convertersCommonCode.version>3.0-SNAPSHOT</convertersCommonCode.version>
+	</properties>
+	
+	<scm>
+		<connection>scm:svn:https://csfe.aceworkspace.net/svn/repos/va-oia-terminology-converters/ucum/trunk/ucum-mojo</connection>
+		<developerConnection>scm:svn:https://csfe.aceworkspace.net/svn/repos/va-oia-terminology-converters/ucum/trunk/ucum-mojo/</developerConnection>
+		<url>https://csfe.aceworkspace.net/integration/viewvc/viewvc.cgi/ucum/trunk/ucum-mojo/?root=va-oia-terminology-converters&amp;system=exsy1002</url>
+	</scm>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ihtsdo</groupId>
-			<artifactId>wb-foundation</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ihtsdo</groupId>
-			<artifactId>wb-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>gov.va.oia.terminology.converters</groupId>
 			<artifactId>convertersCommonCode</artifactId>
+			<version>${convertersCommonCode.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
+			<version>51.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.equinox</groupId>
 			<artifactId>osgi</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.unitsofmeasurement</groupId>
 			<artifactId>api</artifactId>
+			<version>0.6.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jscience</groupId>
 			<artifactId>jscience</artifactId>
+			<version>4.3.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.uomo</groupId>
 			<artifactId>ucum</artifactId>
+			<version>0.7.0.201306062021</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.uomo</groupId>
 			<artifactId>core</artifactId>
+			<version>0.7.0.201306062021</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.uomo</groupId>
 			<artifactId>units</artifactId>
+			<version>0.7.0.201306062021</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+				</configuration>
+				<executions>
+					<execution>
+						<id>mojo-descriptor</id>
+						<goals>
+							<goal>descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
