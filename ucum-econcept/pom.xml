@@ -6,7 +6,7 @@
 	<groupId>gov.va.oia.terminology.converters</groupId>
 	<artifactId>ucum-econcept</artifactId>
 	<!-- this should be set to ${processedArtifact.id}-{processedArtifact.version}-loader-${loader.version} but that doesn't appease the maven gods that know best.... -->
-	<version>sct-econcept-2014.01.31-build-8-loader-2.0-SNAPSHOT</version>
+	<version>sct-econcept-2015.01.31-build-7-loader-2.0-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	<name>ucum-econcept</name>
@@ -14,7 +14,7 @@
 	<properties>
 		<processedArtifact.group>org.ihtsdo.sct.baseline</processedArtifact.group>
 		<processedArtifact.id>sct-econcept</processedArtifact.id>
-		<processedArtifact.version>2014.01.31-build-8</processedArtifact.version>
+		<processedArtifact.version>2015.01.31-build-7</processedArtifact.version>
 		<processedArtifact.classifier>latest</processedArtifact.classifier>
 		<!--processedArtifact.group>gov.va.oia.terminology.converters</processedArtifact.group>
 		<processedArtifact.id>loinc-econcept</processedArtifact.id>
